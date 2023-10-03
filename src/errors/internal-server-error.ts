@@ -1,0 +1,20 @@
+import { CustomError } from "./custom-error";
+
+export class InternalServerError extends CustomError {
+  statusCode: number = 500;
+
+  constructor(public message: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, InternalServerError.prototype);
+  }
+
+  serializeErrors() {
+    return {
+      message: this.message,
+      status: false,
+      code: this.statusCode,
+      resource: "Internal Server Error",
+    };
+  }
+}
