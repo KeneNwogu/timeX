@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import 'express-async-errors'
 import { errorHandler } from "./middlewares/errorHandler";
 import { auth } from "./middlewares/auth";
+import cors from 'cors'
 
 declare global {
     namespace Express {
@@ -26,6 +27,7 @@ config()
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors({ credentials: true, origin: true }))
 app.use(express.json())
 
 // Connect to MongoDB
