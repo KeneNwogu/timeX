@@ -13,6 +13,7 @@ const ZodMiddleware =
       return next();
     } catch (error) {
 
+      console.log(error)
       const zErr = error as ZodError;
       
       throw new RequestValidationError(zErr); 

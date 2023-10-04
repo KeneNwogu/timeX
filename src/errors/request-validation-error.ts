@@ -12,8 +12,14 @@ export class RequestValidationError extends CustomError {
   }
 
   serializeErrors() {
+    const errors = {}
+    this.error.issues.forEach(issue => {
+      if(errors[issue.path[0]]) errors[issue.path[0]].push(issue.message)
+      else errors[issue.path[0]] = [issue.message]
+    })
     return { 
-      message: `${this.error.issues[0].path}: ${this.error.issues[0].message} `,
+      errors,
+      message: `invalid request payload`,
       code: this.statusCode,
       status: false,
       resource: "Validation",
