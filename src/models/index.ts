@@ -9,7 +9,7 @@ const EmployerSchema = new mongoose.Schema({
     password: { type: String, required: true }
 })
 
-export const EmployerModel = mongoose.model('Employee', EmployerSchema)
+export const EmployerModel = mongoose.model('Employer', EmployerSchema)
 
 const StaffSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -17,13 +17,15 @@ const StaffSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: false },
     employer: { ref: "Employer", type: Types.ObjectId },
-    authToken: { type: String, required: false }
+    authToken: { type: String, required: false },
+    lastEntryTime: { type: Date, required: false }
 })
 export const StaffModel = mongoose.model('Staff', StaffSchema)
 
 const StaffLogSchema = new mongoose.Schema({
     staff: { ref: "Staff", type: Types.ObjectId },
-    entryDate: { type: Date, required: true }
+    entryDate: { type: Date, required: true },
+    entryTime: { type: Date, required: true }
 })
 export const StaffLogModel = mongoose.model("StaffLog", StaffLogSchema)
 

@@ -2,13 +2,13 @@ import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import ZodMiddleware from "./middlewares/zodMiddleware";
 import { createEmployerSchema, createStaffSchema, loginEmployerSchema, loginStaffSchema } from "./zodSchemas";
-import { createEmployer, createStaff, employerLogin, loginStaff } from "./controllers";
+import { createStaff, getStaffDetails, listStaff, loginStaff } from "./controllers/staff.controller";
 import { config } from "dotenv";
-import bodyParser from "body-parser";
 import 'express-async-errors'
 import { errorHandler } from "./middlewares/errorHandler";
 import { auth } from "./middlewares/auth";
 import cors from 'cors'
+import { createEmployer, employerLogin } from "./controllers/employer.controller";
 
 declare global {
     namespace Express {
@@ -36,7 +36,9 @@ mongoose.connect(process.env.MONGO_URI).then(() => console.log('connected to db'
 app.get('/health', (req: Request, res: Response) => res.status(200).end())
 app.post('/api/v1/employers', ZodMiddleware(createEmployerSchema), createEmployer)
 app.post('/api/v1/employers/tokens', ZodMiddleware(loginEmployerSchema), employerLogin)
-app.post('/api/v1/staffs', auth('employer'), ZodMiddleware(createStaffSchema), createStaff),
+app.post('/api/v1/staffs', auth('employer'), ZodMiddleware(createStaffSchema), createStaff)
+app.get('/api/v1/staffs', auth('employer'), listStaff)
+app.get('/api/v1/staffs/:staffId', auth('employer'), getStaffDetails)
 app.post('/api/v1/staffs/tokens', ZodMiddleware(loginStaffSchema),loginStaff)
 
 app.use(errorHandler)

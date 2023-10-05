@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { EmployerModel, StaffLogModel, StaffModel } from "../models";
-import bcrypt from 'bcrypt'
+import { StaffLogModel, StaffModel } from "../models";
 import { BadRequestError } from "../errors/bad-request-error";
 import jwt from 'jsonwebtoken'
 import { simpleDecryption, simpleEncryption } from "../utils/encrypt";
