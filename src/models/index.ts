@@ -17,6 +17,7 @@ const StaffSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: false },
     employer: { ref: "Employer", type: Types.ObjectId },
+    role: { type: String, required: true },
     authToken: { type: String, required: false },
     lastEntryTime: { type: Date, required: false }
 })
