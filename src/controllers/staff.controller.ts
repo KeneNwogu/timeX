@@ -62,9 +62,23 @@ export const loginStaff = async (req: Request, res: Response) => {
 }
 
 export const listStaff = async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 1
+    const limit = 10 // 10 items per page
+
     let staff = await StaffModel.find({ employer: new Types.ObjectId(req.user.id) })
+    .limit(limit).skip((page - 1) * limit)
+
+    const staffCount = await StaffModel.count()
+    const totalPages = Math.ceil(staffCount / limit)
+
+    const absoluteUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+
+    const next = page * limit >= staffCount ? null : `${absoluteUrl}`.replace(/page=\d+/g, `page=${page + 1}`)
+    const previous = page > 1 ? `${absoluteUrl}`.replace(/page=\d+/g, `page=${page - 1}`) : null
+
+    if(staff.length < 1) throw new NotFoundError("Invalid page")
     
-    return res.json({ staff })
+    return res.json({ count: staff.length, totalPages, previous, next, staff })
 }
 
 export const getStaffDetails = async (req: Request, res: Response) => {
