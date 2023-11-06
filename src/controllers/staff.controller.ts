@@ -6,7 +6,7 @@ import { simpleDecryption, simpleEncryption } from "../utils/encrypt";
 import { loginGrantTemplate, sendMail } from "../utils/email";
 import { dateToUTCDate, getCurrentDay, isEqualDates } from "../utils/date";
 import { NotFoundError } from "../errors/not-found-error";
-import * as dbAction from "../db/staff";
+import * as dbAction from "../services/staff.service";
 
 export const createStaff = async (req: Request, res: Response) => {
     let { email, firstName, lastName, phone, role } = req.body;

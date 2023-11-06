@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { EmployerModel } from "../models";
 import bcrypt from "bcrypt";
 import { BadRequestError } from "../errors/bad-request-error";
-import { createANewEmployer, getEmployerByEmail } from "../db/employer";
+import {
+    createANewEmployer,
+    getEmployerByEmail,
+} from "../services/employer.service";
 import jwt from "jsonwebtoken";
-import { get } from "mongoose";
 
 export const createEmployer = async (req: Request, res: Response) => {
     let { firstName, lastName, companyName, email, phone, password } = req.body;
