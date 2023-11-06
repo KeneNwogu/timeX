@@ -8,5 +8,5 @@ export const createANewEmployer = (
     params: Record<string, any>,
     password: any
 ) => {
-    return new EmployerModel({ ...params, password });
+    return new EmployerModel({ ...params, password }).save();
 };
