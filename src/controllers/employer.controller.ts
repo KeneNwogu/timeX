@@ -23,10 +23,10 @@ export const createEmployer = async (req: Request, res: Response) => {
 export const employerLogin = async (req: Request, res: Response) => {
     let { email, password } = req.body;
     const employer = await getEmployerByEmail(email);
-    if (!employer) throw new BadRequestError("Invalid email or password");
+    if (!employer) throw new BadRequestError("Invalid email");
 
     if (!bcrypt.compareSync(password, employer.password))
-        throw new BadRequestError("Invalid email or password");
+        throw new BadRequestError("Invalid credentials");
 
     const token = jwt.sign(
         { id: employer.id, email: employer.email },
