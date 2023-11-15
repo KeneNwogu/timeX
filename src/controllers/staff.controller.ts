@@ -85,7 +85,6 @@ export const listStaff = async (req: Request, res: Response) => {
     const staffCount = await StaffModel.count();
     const totalPages = Math.ceil(staffCount / limit);
 
-    if (page > totalPages) throw new NotFoundError("Page not found");
     let next = page >= totalPages ? null : setPageUrl(absoluteUrl, page + 1);
     let previous = page > 1 ? setPageUrl(absoluteUrl, page - 1) : null;
 
@@ -96,7 +95,7 @@ export const listStaff = async (req: Request, res: Response) => {
 
     if (staff.length < 1 && page > 1)
         throw new NotFoundError(
-            "There are no staffs associated with this employer"
+            "Invalid Page"
         );
 
     return res.json({ count: staff.length, totalPages, previous, next, staff });
