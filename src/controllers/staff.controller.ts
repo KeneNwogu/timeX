@@ -8,6 +8,10 @@ import { dateToUTCDate, getCurrentDay, isEqualDates } from "../utils/date";
 import { NotFoundError } from "../errors/not-found-error";
 import * as dbAction from "../services/staff.service";
 
+const setPageUrl = (url: string, page?: number) => {
+    return `${url}`.replace(/page=\d+/g, `page=${page}`);
+};
+
 export const createStaff = async (req: Request, res: Response) => {
     let { email, firstName, lastName, phone, role } = req.body;
 
@@ -65,6 +69,10 @@ export const loginStaff = async (req: Request, res: Response) => {
 };
 
 export const listStaff = async (req: Request, res: Response) => {
+    const absoluteUrl = `${req.protocol}://${req.get("host")}${
+        req.originalUrl
+    }`;
+
     const page = Number(req.query.page) || 1;
     const limit = 10; // 10 items per page
 
@@ -77,20 +85,18 @@ export const listStaff = async (req: Request, res: Response) => {
     const staffCount = await StaffModel.count();
     const totalPages = Math.ceil(staffCount / limit);
 
-    const absoluteUrl = `${req.protocol}://${req.get("host")}${
-        req.originalUrl
-    }`;
+    let next = page >= totalPages ? null : setPageUrl(absoluteUrl, page + 1);
+    let previous = page > 1 ? setPageUrl(absoluteUrl, page - 1) : null;
 
-    const next =
-        page * limit >= staffCount
-            ? null
-            : `${absoluteUrl}`.replace(/page=\d+/g, `page=${page + 1}`);
-    const previous =
-        page > 1
-            ? `${absoluteUrl}`.replace(/page=\d+/g, `page=${page - 1}`)
-            : null;
+    // if page is not set in the query string, set it to 1
+    if (!req.query || !req.query.page) {
+        return res.json([]);
+    }
 
-    if (staff.length < 1) throw new NotFoundError("Invalid page");
+    if (staff.length < 1 && page > 1)
+        throw new NotFoundError(
+            "Invalid Page"
+        );
 
     return res.json({ count: staff.length, totalPages, previous, next, staff });
 };
@@ -100,7 +106,7 @@ export const getStaffDetails = async (req: Request, res: Response) => {
         req.params.staffId,
         req.user.id
     );
-    if (!staffMember) throw new NotFoundError("staff member was not found");
+    if (!staffMember) throw new NotFoundError("Staff member was not found");
     const entryLogs = await dbAction.getStaffLog(staffMember._id);
     return res.json({ staff: staffMember, entryLogs });
 };
