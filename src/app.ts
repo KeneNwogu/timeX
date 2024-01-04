@@ -5,6 +5,9 @@ import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
 import router from "./router";
 
+// don't remove this, it streams the errors from the application to the error handler
+import 'express-async-errors'
+
 declare global {
     namespace Express {
         interface Request {}
@@ -29,15 +32,15 @@ mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("Successfully connected to db"));
 
+app.use("/", router());
+
 app.get("/health", (req: Request, res: Response) =>
     res.status(200).send("Good health").end()
 );
 
-// app.use(errors());
+// ERROR HANDLER MUST BE LAST!!!
 app.use(errorHandler);
 
 app.listen(port, () => {
     console.log("App listening on port " + port);
 });
-
-app.use("/", router());
