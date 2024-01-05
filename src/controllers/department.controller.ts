@@ -7,7 +7,7 @@ export const listDepartments = async (req: Request, res: Response) => {
     // Logic to fetch departments from the database
     const departments = await departmentService.listDepartments(req.user.id);
 
-    return res.json(departments);
+    return res.json({departments});
 };
 
 // POST /departments
@@ -22,5 +22,5 @@ export const createDepartment = async (req: Request, res: Response) => {
         throw new BadRequestError("Department with this name already exists");
 
     const department = await departmentService.createDepartment(employer, req.body);
-    return res.status(201).json(department);
+    return res.status(201).json({department});
 };
