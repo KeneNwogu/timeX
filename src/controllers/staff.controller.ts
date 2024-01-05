@@ -89,9 +89,9 @@ export const listStaff = async (req: Request, res: Response) => {
     let previous = page > 1 ? setPageUrl(absoluteUrl, page - 1) : null;
 
     // if page is not set in the query string, set it to 1
-    if (!req.query || !req.query.page) {
-        return res.json([]);
-    }
+    // if (!req.query || !req.query.page) {
+    //     return res.json([]);
+    // }
 
     if (staff.length < 1 && page > 1)
         throw new NotFoundError(
