@@ -11,7 +11,7 @@ export const createEmployer = async (req: Request, res: Response) => {
     let { firstName, lastName, companyName, email, phone, password } = req.body;
 
     if (await getEmployerByEmail(email))
-        throw new BadRequestError("Employer with this email exists");
+        throw new BadRequestError("Employer with this email already exists");
 
     const employer = await createANewEmployer(
         { firstName, lastName, companyName, email, phone },

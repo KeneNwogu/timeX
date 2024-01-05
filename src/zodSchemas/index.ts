@@ -9,6 +9,10 @@ export const createEmployerSchema = object({
     password: string({ required_error: "password is required" }).min(6)
 }).strict()
 
+export const createDepartmentSchema = object({
+    name: string({ required_error: "department name is required" }).min(3),
+})
+
 export const loginEmployerSchema = object({
     email: string({ required_error: "email is required" }),
     password: string({ required_error: "password is required" })
