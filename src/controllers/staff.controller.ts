@@ -6,20 +6,30 @@ import { simpleDecryption, simpleEncryption } from "../utils/encrypt";
 import { loginGrantTemplate, sendMail } from "../utils/email";
 import { dateToUTCDate, getCurrentDay, isEqualDates } from "../utils/date";
 import { NotFoundError } from "../errors/not-found-error";
-import * as dbAction from "../services/staff.service";
+import * as staffService from "../services/staff.service";
+import * as departmentService from "../services/department.service";
 
 const setPageUrl = (url: string, page?: number) => {
     return `${url}`.replace(/page=\d+/g, `page=${page}`);
 };
 
 export const createStaff = async (req: Request, res: Response) => {
-    let { email, firstName, lastName, phone, role } = req.body;
+    let { email, firstName, lastName, phone, role, department } = req.body;
 
-    if (await dbAction.getOneStaff(email, req.user.id))
+    // check if department exists
+    const departmentExists = await departmentService.getDepartmentById(
+        req.user.id,
+        department
+    );
+
+    if (!departmentExists)
+        throw new BadRequestError("Department does not exist");
+
+    if (await staffService.getOneStaff(email, req.user.id))
         throw new BadRequestError("a staff with this email already exists");
 
-    const staff = await dbAction.createANewStaff(
-        { email, firstName, lastName, phone, role },
+    const staff = await staffService.createANewStaff(
+        { email, firstName, lastName, phone, role, department },
         req.user.id
     );
     await staff.save();
@@ -43,7 +53,7 @@ export const loginStaff = async (req: Request, res: Response) => {
         throw new BadRequestError("Invalid auth token provided");
     }
 
-    let staff = await dbAction.getStaffByToken(authToken);
+    let staff = await staffService.getStaffByToken(authToken);
 
     if (!staff) throw new BadRequestError("Invalid auth token provided");
 
@@ -58,7 +68,7 @@ export const loginStaff = async (req: Request, res: Response) => {
 
     // create request log if not exists
 
-    await dbAction.updateStaffLog(staff._id);
+    await staffService.updateStaffLog(staff._id);
 
     const token = jwt.sign(
         { id: staff.id, email: staff.email },
@@ -74,15 +84,15 @@ export const listStaff = async (req: Request, res: Response) => {
     }`;
 
     const page = Number(req.query.page) || 1;
-    const limit = 10; // 10 items per page
+    const limit = 1; // 10 items per page
 
-    let staff = await dbAction.getStaffsWithPagination(
+    let staff = await staffService.getStaffsWithPagination(
         req.user.id,
         page,
         limit
     );
 
-    const staffCount = await StaffModel.count();
+    const staffCount = await StaffModel.count({ employer: staffService.createIdFromMongoose(req.user.id) });
     const totalPages = Math.ceil(staffCount / limit);
 
     let next = page >= totalPages ? null : setPageUrl(absoluteUrl, page + 1);
@@ -102,11 +112,11 @@ export const listStaff = async (req: Request, res: Response) => {
 };
 
 export const getStaffDetails = async (req: Request, res: Response) => {
-    let staffMember = await dbAction.getStaffWithID(
+    let staffMember = await staffService.getStaffWithID(
         req.params.staffId,
         req.user.id
     );
     if (!staffMember) throw new NotFoundError("Staff member was not found");
-    const entryLogs = await dbAction.getStaffLog(staffMember._id);
+    const entryLogs = await staffService.getStaffLog(staffMember._id);
     return res.json({ staff: staffMember, entryLogs });
 };

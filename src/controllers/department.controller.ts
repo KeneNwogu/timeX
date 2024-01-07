@@ -5,9 +5,8 @@ import { BadRequestError } from '../errors/bad-request-error';
 // GET /departments
 export const listDepartments = async (req: Request, res: Response) => {
     // Logic to fetch departments from the database
-    const departments = await departmentService.listDepartments(req.user.id);
-
-    return res.json({departments});
+    const departments = await departmentService.paginatedListDepartments(req, req.user.id, Number(req.query.page || 1));
+    return res.json(departments);
 };
 
 // POST /departments

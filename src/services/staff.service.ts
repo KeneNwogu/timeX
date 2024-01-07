@@ -12,10 +12,14 @@ export const createANewStaff = (
     params: Record<string, any>,
     employerId: string
 ) => {
+    const { department, ...data } = params;
+
     const staff = new StaffModel({
-        ...params,
+        ...data,
+        department: createIdFromMongoose(department),
         employer: createIdFromMongoose(employerId),
     });
+    
     staff.authToken = staff.id + "-" + crypto.randomUUID();
     return staff;
 };

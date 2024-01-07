@@ -28,7 +28,7 @@ export default (router: Router) => {
     router.get(
         "/api/v1/staffs",
         auth("employer"),
-        celebrate({ [Segments.QUERY]: pageQuerySerializer }),
+        // celebrate({ [Segments.QUERY]: pageQuerySerializer }),
         listStaff
     );
     router.get("/api/v1/staffs/:staffId", auth("employer"), getStaffDetails);

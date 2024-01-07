@@ -1,4 +1,4 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Types, Model } from "mongoose";
 
 const EmployerSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -25,6 +25,7 @@ const StaffSchema = new mongoose.Schema({
     phone: { type: String, required: false, unique: true },
     employer: { ref: "Employer", type: Types.ObjectId },
     role: { type: String, required: true },
+    department: { ref: "Department", type: Types.ObjectId },
     authToken: { type: String, required: false },
     lastEntryTime: { type: Date, required: false }
 })

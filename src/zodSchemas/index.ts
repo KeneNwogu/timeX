@@ -24,7 +24,8 @@ export const createStaffSchema = object({
     lastName: string({ required_error: "last name is required" }).min(3),
     email: string({ required_error: "email is required" }).email(),
     phone: string().optional(),
-    role: string({ required_error: "specify a role for your staff member"})
+    role: string({ required_error: "specify a role for your staff member"}),
+    department: string({ required_error: "specify a department for your staff member"}),
 })
 
 export const loginStaffSchema = object({
