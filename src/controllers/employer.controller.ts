@@ -4,6 +4,7 @@ import { BadRequestError } from "../errors/bad-request-error";
 import {
     createANewEmployer,
     getEmployerByEmail,
+    updateEmployer as updateEmployerService,
 } from "../services/employer.service";
 import jwt from "jsonwebtoken";
 
@@ -35,3 +36,14 @@ export const employerLogin = async (req: Request, res: Response) => {
     );
     return res.json({ employer, token });
 };
+
+export const updateEmployer = async (req: Request, res: Response) => {
+    let { loginTime } = req.body;
+    
+    const employer = await updateEmployerService({
+        _id: req.user.id,
+        loginTime,
+    });
+
+    return res.json({ employer });
+}

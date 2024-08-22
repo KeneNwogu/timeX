@@ -50,6 +50,7 @@ export const loginStaff = async (req: Request, res: Response) => {
 
     try {
         authToken = simpleDecryption(authToken);
+        console.log(authToken);
     } catch (error) {
         throw new BadRequestError("Invalid auth token provided");
     }

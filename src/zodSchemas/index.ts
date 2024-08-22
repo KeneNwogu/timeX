@@ -9,6 +9,11 @@ export const createEmployerSchema = object({
     password: string({ required_error: "password is required" }).min(6)
 }).strict()
 
+export const updateEmployerSchema = object({
+    loginTime: string({ required_error: "login time is required" })
+    .regex(new RegExp(/^([01]\d|2[0-3]):([0-5]\d)$/), "specify time in 24h format").min(4)
+})
+
 export const createDepartmentSchema = object({
     name: string({ required_error: "department name is required" }).min(3),
 })

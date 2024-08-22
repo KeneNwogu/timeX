@@ -1,5 +1,5 @@
 // this is for all the database connection
-import { StaffLogModel, StaffModel } from "../models";
+import { EmployerModel, StaffLogModel, StaffModel } from "../models";
 import { Types } from "mongoose";
 import crypto from "crypto";
 import { dateToUTCDate, getCurrentDay } from "../utils/date";
@@ -53,7 +53,35 @@ export const getStaffLog = (staffId: any) => {
     return StaffLogModel.find({ staff: createIdFromMongoose(staffId) });
 };
 
-export const updateStaffLog = (staffId: any) => {
+export const updateStaffLog = async (staffId: any) => {
+    let staff = await StaffModel.findById(staffId);
+
+    let log = await StaffLogModel.findOne({ entryDate: getCurrentDay(), staff: staffId });
+    if(log) return log;   
+    
+    let employer = await EmployerModel.findById(staff.employer);
+
+    console.log(employer.loginTime);
+    console.log(dateToUTCDate())
+    console.log(dateToUTCDate(new Date(
+        getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`
+    )))
+
+    console.log(dateToUTCDate() > dateToUTCDate(new Date(
+        getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`
+    )))
+
+    let late = dateToUTCDate() > dateToUTCDate(new Date(
+        getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`
+    ));
+
+    await StaffLogModel.create({
+        entryDate: getCurrentDay(),
+        staff: staffId,
+        entryTime: dateToUTCDate(),
+        late
+    });
+
     return StaffLogModel.updateOne(
         { entryDate: getCurrentDay(), staff: staffId },
         {

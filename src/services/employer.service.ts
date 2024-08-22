@@ -10,3 +10,13 @@ export const createANewEmployer = (
 ) => {
     return new EmployerModel({ ...params, password }).save();
 };
+
+
+export const updateEmployer = (employer: {
+    _id: string;
+    loginTime: string;
+}) => {
+    return EmployerModel.findByIdAndUpdate(employer._id, employer, {
+        new: true,
+    });
+};

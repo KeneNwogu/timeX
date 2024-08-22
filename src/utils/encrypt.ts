@@ -1,4 +1,7 @@
 import crypto from 'crypto'
+import { config } from 'dotenv';
+
+config();
 
 export function simpleEncryption(message: string, secret?: string) {
     const cipher = crypto.createCipheriv('aes-256-ecb', 
@@ -7,6 +10,7 @@ export function simpleEncryption(message: string, secret?: string) {
     encryptedMessage += cipher.final('hex');
     return encryptedMessage;
 }
+
 export function simpleDecryption(encryptedMessage: string, secret?: string) {
     const decipher = crypto.createDecipheriv('aes-256-ecb', 
     Buffer.from(secret || process.env.MESSAGE_ENCRYPTION_KEY, 'hex'), null);
