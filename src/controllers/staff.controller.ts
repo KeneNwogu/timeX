@@ -35,11 +35,11 @@ export const createStaff = async (req: Request, res: Response) => {
     await staff.save();
 
     // send email to staff
-    // await sendMail(
-    //     staff.email,
-    //     "Login Grant",
-    //     loginGrantTemplate(staff.firstName, simpleEncryption(staff.authToken))
-    // );
+    await sendMail(
+        staff.email,
+        "Login Grant",
+        loginGrantTemplate(staff.firstName, simpleEncryption(staff.authToken))
+    );
     
     return res.json({ staff });
 };
