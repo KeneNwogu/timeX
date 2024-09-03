@@ -86,7 +86,7 @@ export const listStaff = async (req: Request, res: Response) => {
     }`;
 
     const page = Number(req.query.page) || 1;
-    const limit = 1; // 10 items per page
+    const limit = 10; // 10 items per page
 
     let staff = await staffService.getStaffsWithPagination(
         req.user.id,
