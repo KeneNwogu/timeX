@@ -33,7 +33,7 @@ export const loginGrantTemplate = (username: string, authToken: string) => `<!DO
 <body>
     <p>Hello ${username},</p>
     <p>We have generated a login token for your account. To log in, please click the link below:</p>
-    <a href="http://localhost:3000/login?authToken=${authToken}" target="_blank">Log In</a>
+    <a href="${process.env.FRONTEND_CLIENT}/login?authToken=${authToken}" target="_blank">Log In</a>
     <p>If you did not request this login token or have any concerns, please contact our support team.</p>
     <p>Thank you for choosing TimeX.</p>
     <p>Best regards,</p>
