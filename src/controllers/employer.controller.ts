@@ -24,7 +24,7 @@ export const createEmployer = async (req: Request, res: Response) => {
 export const employerLogin = async (req: Request, res: Response) => {
     let { email, password } = req.body;
     const employer = await getEmployerByEmail(email);
-    if (!employer) throw new BadRequestError("Invalid email");
+    if (!employer) throw new BadRequestError("Invalid credentials");
 
     if (!bcrypt.compareSync(password, employer.password))
         throw new BadRequestError("Invalid credentials");

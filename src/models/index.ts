@@ -23,8 +23,8 @@ export const DepartmentModel = mongoose.model('Department', DepartmentSchema)
 const StaffSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: false, unique: true },
+    email: { type: String, required: true, lowercase: true },
+    phone: { type: String, required: false },
     employer: { ref: "Employer", type: Types.ObjectId },
     role: { type: String, required: true },
     department: { ref: "Department", type: Types.ObjectId },
