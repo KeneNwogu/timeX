@@ -8,7 +8,7 @@ import {
 
 import ZodMiddleware from "../middlewares/zodMiddleware";
 
-import { createStaffSchema, loginStaffSchema } from "../zodSchemas";
+import { createStaffSchema, loginStaffSchema, updateStaffSchema } from "../zodSchemas";
 
 import { celebrate, Segments, Joi } from "celebrate";
 import { auth } from "../middlewares/auth";
@@ -34,7 +34,8 @@ export default (router: Router) => {
     );
     router.get("/api/v1/staffs/:staffId", auth("employer"), getStaffDetails);
 
-    router.put("/api/v1/staffs/:staffId", auth("employer", "staff"), updateStaff);
+    router.put("/api/v1/staffs/:staffId", auth("employer", "staff"), 
+    ZodMiddleware(updateStaffSchema), updateStaff);
 
     router.post(
         "/api/v1/staffs/tokens",
