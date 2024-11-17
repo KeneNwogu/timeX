@@ -8,6 +8,7 @@ import { dateToUTCDate, getCurrentDay, isEqualDates } from "../utils/date";
 import { NotFoundError } from "../errors/not-found-error";
 import * as staffService from "../services/staff.service";
 import * as departmentService from "../services/department.service";
+import bcrypt from "bcrypt";
 
 const setPageUrl = (url: string, page?: number) => {
     return `${url}`.replace(/page=\d+/g, `page=${page}`);
@@ -45,17 +46,32 @@ export const createStaff = async (req: Request, res: Response) => {
 };
 
 export const loginStaff = async (req: Request, res: Response) => {
-    let { authToken } = req.body;
-    if (!authToken) throw new BadRequestError("Invalid auth token provided");
+    let { authToken, passwordAuth } = req.body;
 
-    try {
-        authToken = simpleDecryption(authToken);
-        console.log(authToken);
-    } catch (error) {
-        throw new BadRequestError("Invalid auth token provided");
+    if (!authToken && !passwordAuth) 
+        throw new BadRequestError("provide either an auth token or password");
+
+    if (authToken && passwordAuth)
+        throw new BadRequestError("provide either an auth token or password");
+
+    let staff: any = null;
+
+    if (authToken){
+        try {
+            authToken = simpleDecryption(authToken);
+            staff = await staffService.getStaffByToken(authToken);
+        } catch (error) {
+            throw new BadRequestError("Invalid auth token provided");
+        }
     }
 
-    let staff = await staffService.getStaffByToken(authToken);
+    if (passwordAuth) {
+        staff = await StaffModel.findOne({ email: passwordAuth.email });
+        if (!staff) throw new BadRequestError("Invalid credentials");
+
+        if (!bcrypt.compareSync(passwordAuth.password, staff.password))
+            throw new BadRequestError("Invalid credentials");
+    }
 
     if (!staff) throw new BadRequestError("Invalid auth token provided");
 
@@ -73,7 +89,7 @@ export const loginStaff = async (req: Request, res: Response) => {
     await staffService.updateStaffLog(staff._id);
 
     const token = jwt.sign(
-        { id: staff.id, email: staff.email },
+        { id: staff.id, email: staff.email, role: "staff" },
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1d" }
     );
@@ -109,16 +125,37 @@ export const listStaff = async (req: Request, res: Response) => {
         throw new NotFoundError(
             "Invalid Page"
         );
-
+    
     return res.json({ count: staff.length, totalPages, previous, next, staff });
 };
 
 export const getStaffDetails = async (req: Request, res: Response) => {
-    let staffMember = await staffService.getStaffWithID(
+    let staffMember = await staffService.getStaffByEmployer(
         req.params.staffId,
         req.user.id
     );
+
     if (!staffMember) throw new NotFoundError("Staff member was not found");
     const entryLogs = await staffService.getStaffLog(staffMember._id);
     return res.json({ staff: staffMember, entryLogs });
 };
+
+
+export const updateStaff = async (req: Request, res: Response) => {
+    let staff = await staffService.getStaffById(req.params.staffId);
+
+    // if user is not an employer, they can only update their own details
+    if (req.user.role !== "employer" && req.user.id !== req.params.staffId)
+        throw new BadRequestError("You are not authorized to perform this action");
+
+    // if user is an employer, they can only update their staff details
+    if (req.user.role === "employer" && req.user.id !== staff.employer.toString())
+        throw new BadRequestError("You are not authorized to perform this action");
+
+    let { password } = req.body;
+
+    staff.password = bcrypt.hashSync(password, 10);
+    await staff.save();
+
+    return res.json({ staff });
+}

@@ -24,6 +24,11 @@ export const loginEmployerSchema = object({
 }).strict()
 
 
+export const passwordAuthSchema = object({
+    email: string({ required_error: "email is required" }),
+    password: string({ required_error: "password is required" })
+}).strict()
+
 export const createStaffSchema = object({
     firstName: string({ required_error: "first name is required" }).min(4),
     lastName: string({ required_error: "last name is required" }).min(3),
@@ -34,5 +39,10 @@ export const createStaffSchema = object({
 })
 
 export const loginStaffSchema = object({
-    authToken: string({ required_error: "email is required" }),
+    authToken: string().optional(),
+    passwordAuth: passwordAuthSchema.optional()
+}).strict()
+
+export const updateStaffSchema = object({
+    password: string({ required_error: "password is required" }).min(6),
 }).strict()

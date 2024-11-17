@@ -3,6 +3,7 @@ import {
     getStaffDetails,
     listStaff,
     loginStaff,
+    updateStaff
 } from "../controllers/staff.controller";
 
 import ZodMiddleware from "../middlewares/zodMiddleware";
@@ -32,6 +33,9 @@ export default (router: Router) => {
         listStaff
     );
     router.get("/api/v1/staffs/:staffId", auth("employer"), getStaffDetails);
+
+    router.put("/api/v1/staffs/:staffId", auth("employer", "staff"), updateStaff);
+
     router.post(
         "/api/v1/staffs/tokens",
         ZodMiddleware(loginStaffSchema),

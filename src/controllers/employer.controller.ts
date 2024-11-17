@@ -30,7 +30,7 @@ export const employerLogin = async (req: Request, res: Response) => {
         throw new BadRequestError("Invalid credentials");
 
     const token = jwt.sign(
-        { id: employer.id, email: employer.email },
+        { id: employer.id, email: employer.email, role: "employer" },
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1d" }
     );

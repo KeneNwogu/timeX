@@ -32,7 +32,13 @@ export const getStaffByToken = (token: string) => {
     return StaffModel.findOne({ authToken: token });
 };
 
-export const getStaffWithID = (id: string, employerId: string) => {
+export const getStaffById = (id: string) => {
+    return StaffModel.findOne({
+        _id: createIdFromMongoose(id),
+    });
+};
+
+export const getStaffByEmployer = (id: string, employerId: string) => {
     return StaffModel.findOne({
         _id: createIdFromMongoose(id),
         employer: createIdFromMongoose(employerId),
@@ -60,16 +66,6 @@ export const updateStaffLog = async (staffId: any) => {
     if(log) return log;   
     
     let employer = await EmployerModel.findById(staff.employer);
-
-    console.log(employer.loginTime);
-    console.log(dateToUTCDate())
-    console.log(dateToUTCDate(new Date(
-        getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`
-    )))
-
-    console.log(dateToUTCDate() > dateToUTCDate(new Date(
-        getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`
-    )))
 
     let late = dateToUTCDate() > dateToUTCDate(new Date(
         getCurrentDay().toISOString().split("T")[0] + `T${employer.loginTime}:00Z`

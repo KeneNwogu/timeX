@@ -16,12 +16,12 @@ declare global {
 export interface UserData {
   id: string;
   email: string;
-  role: number;
+  role: "employer" | "staff";
 }
 
 interface Payload extends JwtPayload {}
 
-export const auth = (authRole?: "employer" | "staff") => async (req: Request, _: Response, next: NextFunction) => {
+export const auth = (...authRoles: ("employer" | "staff")[]) => async (req: Request, _: Response, next: NextFunction) => {
   const headerAuth = req.header("Authorization");
 
   if (!headerAuth) {
@@ -36,11 +36,8 @@ export const auth = (authRole?: "employer" | "staff") => async (req: Request, _:
   try {
     const payload = jwt.verify(token, key!) as Payload;
 
-    if(authRole){
-      if(authRole == "employer" && !await EmployerModel.findById(payload.id))
-        throw new NotAuthorizedError(`Invalid authentication role. Please log in as a ${authRole}`);
-      if(authRole == "staff" && !await StaffModel.findById(payload.id))
-        throw new NotAuthorizedError(`Invalid authentication role. Please log in as a ${authRole}`);
+    if(authRoles.length && !authRoles.includes(payload.role as "employer" | "staff")){
+      throw new NotAuthorizedError(`Invalid authentication role. Please log in as a ${payload.role}`);
     }
     
     req.user = payload as UserData;
