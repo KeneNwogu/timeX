@@ -130,10 +130,18 @@ export const listStaff = async (req: Request, res: Response) => {
 };
 
 export const getStaffDetails = async (req: Request, res: Response) => {
-    let staffMember = await staffService.getStaffByEmployer(
-        req.params.staffId,
-        req.user.id
-    );
+    if (req.user.role !== "employer" && req.user.id !== req.params.staffId)
+        throw new BadRequestError("You are not authorized to perform this action");
+
+    let staffMember = null;
+
+    if(req.user.role === "employer")
+        staffMember = await staffService.getStaffByEmployer(
+            req.params.staffId,
+            req.user.id
+        );
+
+    else staffMember = await staffService.getStaffById(req.params.staffId);
 
     if (!staffMember) throw new NotFoundError("Staff member was not found");
     const entryLogs = await staffService.getStaffLog(staffMember._id);

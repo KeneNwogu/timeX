@@ -32,7 +32,7 @@ export default (router: Router) => {
         // celebrate({ [Segments.QUERY]: pageQuerySerializer }),
         listStaff
     );
-    router.get("/api/v1/staffs/:staffId", auth("employer"), getStaffDetails);
+    router.get("/api/v1/staffs/:staffId", auth("employer", "staff"), getStaffDetails);
 
     router.put("/api/v1/staffs/:staffId", auth("employer", "staff"), 
     ZodMiddleware(updateStaffSchema), updateStaff);
