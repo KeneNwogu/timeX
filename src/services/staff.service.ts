@@ -32,8 +32,8 @@ export const getStaffByToken = (token: string) => {
     return StaffModel.findOne({ authToken: token });
 };
 
-export const getStaffById = (id: string) => {
-    return StaffModel.findOne({
+export const getStaffById = async (id: string) => {
+    return await StaffModel.findOne({
         _id: createIdFromMongoose(id),
     });
 };
@@ -55,9 +55,48 @@ export const getStaffsWithPagination = (
         .skip((page - 1) * limit);
 };
 
-export const getStaffLog = (staffId: any) => {
-    return StaffLogModel.find({ staff: createIdFromMongoose(staffId) });
+export const getStaffLog = async (staffId: any) => {
+    return await StaffLogModel.find({ staff: createIdFromMongoose(staffId) });
 };
+
+export const getStaffLoginMetrics = async(staffId: any) => {
+    // const pipeline = [
+    //     { $match: { "staff": createIdFromMongoose(staffId) } },
+    //     { 
+    //         $group: {
+    //             // group by date to string but for a particular month 
+    //             "_id": { $dateToString: { format: "%Y-%m-%d", date: "$entryTime" }  },
+    //             "totalLoginTimes": { $sum: 1 },
+    //             "totalTimesStaffWasLate": {},
+    //             "totalTimeStaffWasEarly": {}
+    //         },
+    //     }, 
+    // ]
+
+    const pipeline = [
+        { 
+            $match: { 
+                "staff": createIdFromMongoose(staffId) 
+            } 
+        },
+        { 
+            $group: {
+                _id: { 
+                    $dateToString: { format: "%Y-%m-01", date: "$entryTime" } 
+                },
+                totalLoginTimes: { $sum: 1 },
+                totalTimesStaffWasLate: { 
+                    $sum: { $cond: [{ $eq: ["$late", true] }, 1, 0] } 
+                },
+                totalTimeStaffWasEarly: { 
+                    $sum: { $cond: [{ $eq: ["$late", false] }, 1, 0] } 
+                }
+            }
+        }
+    ];
+    
+    return await StaffLogModel.aggregate(pipeline);
+}
 
 export const updateStaffLog = async (staffId: any) => {
     let staff = await StaffModel.findById(staffId);

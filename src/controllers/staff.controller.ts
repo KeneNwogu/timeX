@@ -145,7 +145,8 @@ export const getStaffDetails = async (req: Request, res: Response) => {
 
     if (!staffMember) throw new NotFoundError("Staff member was not found");
     const entryLogs = await staffService.getStaffLog(staffMember._id);
-    return res.json({ staff: staffMember, entryLogs });
+    const metrics = await staffService.getStaffLoginMetrics(staffMember._id);
+    return res.json({ staff: staffMember, entryLogs, metrics });
 };
 
 
