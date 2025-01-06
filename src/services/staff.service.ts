@@ -72,10 +72,10 @@ export const getStaffLoginMetrics = async(staffId: any) => {
                     $dateToString: { format: "%Y-%m-01", date: "$entryTime" } 
                 },
                 totalLoginTimes: { $sum: 1 },
-                totalLateLoginTime: { 
+                totalLateLoginTimes: { 
                     $sum: { $cond: [{ $eq: ["$late", true] }, 1, 0] } 
                 },
-                totalEarlyLoginTime: { 
+                totalEarlyLoginTimes: { 
                     $sum: { $cond: [{ $eq: ["$late", false] }, 1, 0] } 
                 }
             }
