@@ -60,19 +60,6 @@ export const getStaffLog = async (staffId: any) => {
 };
 
 export const getStaffLoginMetrics = async(staffId: any) => {
-    // const pipeline = [
-    //     { $match: { "staff": createIdFromMongoose(staffId) } },
-    //     { 
-    //         $group: {
-    //             // group by date to string but for a particular month 
-    //             "_id": { $dateToString: { format: "%Y-%m-%d", date: "$entryTime" }  },
-    //             "totalLoginTimes": { $sum: 1 },
-    //             "totalTimesStaffWasLate": {},
-    //             "totalTimeStaffWasEarly": {}
-    //         },
-    //     }, 
-    // ]
-
     const pipeline = [
         { 
             $match: { 
@@ -85,10 +72,10 @@ export const getStaffLoginMetrics = async(staffId: any) => {
                     $dateToString: { format: "%Y-%m-01", date: "$entryTime" } 
                 },
                 totalLoginTimes: { $sum: 1 },
-                totalTimesStaffWasLate: { 
+                totalLateLoginTime: { 
                     $sum: { $cond: [{ $eq: ["$late", true] }, 1, 0] } 
                 },
-                totalTimeStaffWasEarly: { 
+                totalEarlyLoginTime: { 
                     $sum: { $cond: [{ $eq: ["$late", false] }, 1, 0] } 
                 }
             }
