@@ -56,7 +56,7 @@ export const getStaffsWithPagination = (
 };
 
 export const getStaffLog = async (staffId: any) => {
-    return await StaffLogModel.find({ staff: createIdFromMongoose(staffId) });
+    return await StaffLogModel.find({ staff: createIdFromMongoose(staffId) }).sort('-entryTime');
 };
 
 export const getStaffLoginMetrics = async(staffId: any) => {
