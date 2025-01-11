@@ -32,7 +32,7 @@ mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("Successfully connected to db"));
 
-app.use("/", router());
+app.use("/api/v1", router());
 
 app.get("/health", (req: Request, res: Response) =>
     res.status(200).send("Good health").end()

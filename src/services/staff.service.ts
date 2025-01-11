@@ -33,6 +33,8 @@ export const getStaffByToken = (token: string) => {
 };
 
 export const getStaffById = async (id: string) => {
+    if(!Types.ObjectId.isValid(id)) return null;
+    
     return await StaffModel.findOne({
         _id: createIdFromMongoose(id),
     });
@@ -118,3 +120,8 @@ export const updateStaffLog = async (staffId: any) => {
         }
     );
 };
+
+
+export const deleteStaff = async (staffId: any) => {
+    await StaffModel.findByIdAndDelete(staffId);
+}

@@ -1,5 +1,7 @@
 import {
     createDepartment,
+    deleteDepartment,
+    getStaffByDepartment,
     listDepartments
 } from "../controllers/department.controller";
 import { auth } from "../middlewares/auth";
@@ -11,14 +13,19 @@ import { Router } from "express";
 
 export default (router: Router) => {
     router.post(
-        "/api/v1/departments",
+        "/departments",
         auth("employer"),
         ZodMiddleware(createDepartmentSchema),
         createDepartment
     );
+
     router.get(
-        "/api/v1/departments",
+        "/departments",
         auth("employer"),
         listDepartments
     );
+
+    router.delete("/departments/:departmentId", auth("employer"), deleteDepartment)
+
+    router.get("/departments/:departmentId/staff", auth("employer"), getStaffByDepartment)
 };

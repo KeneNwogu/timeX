@@ -9,5 +9,8 @@ export default (): Router => {
     employer(router);
     staff(router);
     departmentRouter(router);
+
+    // TODO:
+    // router.use("/staffs", staffRouter)
     return router;
 };

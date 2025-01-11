@@ -12,15 +12,15 @@ import { Router } from "express";
 
 export default (router: Router) => {
     router.post(
-        "/api/v1/employers",
+        "/employers",
         ZodMiddleware(createEmployerSchema),
         createEmployer
     );
     router.post(
-        "/api/v1/employers/tokens",
+        "/employers/tokens",
         ZodMiddleware(loginEmployerSchema),
         employerLogin
     );
 
-    router.put("/api/v1/employers", auth("employer"), ZodMiddleware(updateEmployerSchema), updateEmployer);
+    router.put("/employers", auth("employer"), ZodMiddleware(updateEmployerSchema), updateEmployer);
 };

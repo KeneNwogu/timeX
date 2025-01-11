@@ -153,6 +153,8 @@ export const getStaffDetails = async (req: Request, res: Response) => {
 export const updateStaff = async (req: Request, res: Response) => {
     let staff = await staffService.getStaffById(req.params.staffId);
 
+    if(!staff) throw new BadRequestError("invalid staff id");
+
     // if user is not an employer, they can only update their own details
     if (req.user.role !== "employer" && req.user.id !== req.params.staffId)
         throw new BadRequestError("You are not authorized to perform this action");
@@ -167,4 +169,18 @@ export const updateStaff = async (req: Request, res: Response) => {
     await staff.save();
 
     return res.json({ staff });
+}
+
+export const deleteStaff = async (req: Request, res: Response) => {
+    let staff = await staffService.getStaffById(req.params.staffId);
+
+    if(!staff) throw new NotFoundError("staff not found");
+
+    // if employer is not the employer of staff
+    if (req.user.id !== staff.employer.toString())
+        throw new BadRequestError("You are not authorized to perform this action");
+
+    await staffService.deleteStaff(staff._id);
+
+    return res.json({ success: true, message: "deleted staff member successfully" });
 }

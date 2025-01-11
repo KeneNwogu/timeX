@@ -1,5 +1,6 @@
 import {
     createStaff,
+    deleteStaff,
     getStaffDetails,
     listStaff,
     loginStaff,
@@ -21,24 +22,26 @@ const pageQuerySerializer = Joi.object().keys({
 
 export default (router: Router) => {
     router.post(
-        "/api/v1/staffs",
+        "/staffs",
         auth("employer"),
         ZodMiddleware(createStaffSchema),
         createStaff
     );
     router.get(
-        "/api/v1/staffs",
+        "/staffs",
         auth("employer"),
         // celebrate({ [Segments.QUERY]: pageQuerySerializer }),
         listStaff
     );
-    router.get("/api/v1/staffs/:staffId", auth("employer", "staff"), getStaffDetails);
+    router.get("/staffs/:staffId", auth("employer", "staff"), getStaffDetails);
 
-    router.put("/api/v1/staffs/:staffId", auth("employer", "staff"), 
+    router.put("/staffs/:staffId", auth("employer", "staff"), 
     ZodMiddleware(updateStaffSchema), updateStaff);
 
+    router.delete("/staffs/:staffId", auth("employer"), deleteStaff)
+
     router.post(
-        "/api/v1/staffs/tokens",
+        "/staffs/tokens",
         ZodMiddleware(loginStaffSchema),
         loginStaff
     );

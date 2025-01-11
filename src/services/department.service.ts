@@ -1,6 +1,6 @@
-import { DepartmentModel } from "../models";
+import { DepartmentModel, StaffModel } from "../models";
 import { Types } from "mongoose";
-import { paginate } from "../utils/pagination";
+import { paginate, PaginationOptions } from "../utils/pagination";
 import { Request } from "express";
 
 export const createDepartment = async (employer: string, input: any) => {
@@ -35,10 +35,20 @@ export const getDepartmentById = async (employer: string, id: string) => {
     }
 }
 
-export default {
-    createDepartment,
-    listDepartments,
-    getDepartmentByName,
-    getDepartmentById,
-    paginatedListDepartments
-};
+export const deleteDepartment = async (departmentId: string) => {
+    await DepartmentModel.findByIdAndDelete(departmentId);
+}
+
+export const paginateStaffByDepartment = async (
+    req: Request, departmentId: Types.ObjectId, paginationOptions: PaginationOptions
+) => {
+    return await paginate(StaffModel, { department: departmentId }, paginationOptions, req)
+}
+
+// export default {
+//     createDepartment,
+//     listDepartments,
+//     getDepartmentByName,
+//     getDepartmentById,
+//     paginatedListDepartments
+// };

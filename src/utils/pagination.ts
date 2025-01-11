@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { Model, Document, Query, FilterQuery } from 'mongoose';
 
-interface PaginationOptions {
+export interface PaginationOptions {
     page: number;
     limit: number;
 }
