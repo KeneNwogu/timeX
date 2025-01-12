@@ -3,6 +3,7 @@ import { EmployerModel, StaffLogModel, StaffModel } from "../models";
 import { Types } from "mongoose";
 import crypto from "crypto";
 import { dateToUTCDate, getCurrentDay } from "../utils/date";
+import { late } from "zod";
 
 export const createIdFromMongoose = (id: string) => {
     return new Types.ObjectId(id);
@@ -120,6 +121,27 @@ export const updateStaffLog = async (staffId: any) => {
         }
     );
 };
+
+
+export const bulkUpdateStaffLogs = async (staff: any, dates: Date[]) => {
+    const bulkOperations = dates.map(date => ({
+        updateOne: {
+            filter: { entryDate: getCurrentDay(date), staff },
+            update: {
+                $set: {
+                    entryDate: getCurrentDay(date),
+                    entryTime: dateToUTCDate(date),
+                    late: false,
+                    staff,
+                },
+            },
+            upsert: true,
+        },
+    }));
+    
+    await StaffLogModel.bulkWrite(bulkOperations);
+    return true;
+}
 
 
 export const deleteStaff = async (staffId: any) => {

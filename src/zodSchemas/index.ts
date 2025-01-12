@@ -1,4 +1,4 @@
-import { string, object } from "zod";
+import { string, object, array } from "zod";
 
 export const createEmployerSchema = object({
     firstName: string({ required_error: "first name is required" }).min(4),
@@ -45,4 +45,9 @@ export const loginStaffSchema = object({
 
 export const updateStaffSchema = object({
     password: string({ required_error: "password is required" }).min(6),
+}).strict()
+
+
+export const updateStaffLogsSchema = object({
+    dates: array(string().datetime(), { required_error: "provide a list of dates" }),
 }).strict()

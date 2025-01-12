@@ -4,12 +4,13 @@ import {
     getStaffDetails,
     listStaff,
     loginStaff,
-    updateStaff
+    updateStaff,
+    updateStaffLogs
 } from "../controllers/staff.controller";
 
 import ZodMiddleware from "../middlewares/zodMiddleware";
 
-import { createStaffSchema, loginStaffSchema, updateStaffSchema } from "../zodSchemas";
+import { createStaffSchema, loginStaffSchema, updateStaffLogsSchema, updateStaffSchema } from "../zodSchemas";
 
 import { celebrate, Segments, Joi } from "celebrate";
 import { auth } from "../middlewares/auth";
@@ -39,6 +40,9 @@ export default (router: Router) => {
     ZodMiddleware(updateStaffSchema), updateStaff);
 
     router.delete("/staffs/:staffId", auth("employer"), deleteStaff)
+
+    router.post("/staffs/:staffId/logs", auth("employer"), 
+    ZodMiddleware(updateStaffLogsSchema), updateStaffLogs)
 
     router.post(
         "/staffs/tokens",

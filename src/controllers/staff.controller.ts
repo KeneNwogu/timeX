@@ -184,3 +184,13 @@ export const deleteStaff = async (req: Request, res: Response) => {
 
     return res.json({ success: true, message: "deleted staff member successfully" });
 }
+
+
+export const updateStaffLogs = async (req: Request, res: Response) => {
+    let staff = await staffService.getStaffByEmployer(req.params.staffId, req.user.id);
+    if(!staff) throw new NotFoundError("staff not found")
+    
+    let dates = req.body.dates.map(date => new Date(date));
+    let success = await staffService.bulkUpdateStaffLogs(staff._id, dates);
+    return res.json({ success })
+}
