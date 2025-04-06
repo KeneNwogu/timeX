@@ -123,16 +123,19 @@ export const updateStaffLog = async (staffId: any) => {
 };
 
 
-export const bulkUpdateStaffLogs = async (staff: any, dates: Date[]) => {
+export const bulkUpdateStaffLogs = async (staffId: any, dates: Date[]) => {
     const bulkOperations = dates.map(date => ({
         updateOne: {
-            filter: { entryDate: getCurrentDay(date), staff },
+            filter: { 
+                entryDate: getCurrentDay(date), 
+                staff: staffId
+            },
             update: {
                 $set: {
                     entryDate: getCurrentDay(date),
                     entryTime: dateToUTCDate(date),
                     late: false,
-                    staff,
+                    staff: staffId,
                 },
             },
             upsert: true,
