@@ -143,6 +143,15 @@ export const bulkUpdateStaffLogs = async (staffId: any, dates: Date[]) => {
     }));
     
     await StaffLogModel.bulkWrite(bulkOperations);
+
+    // Get the most recent date from the provided dates
+    const mostRecentDate = new Date(Math.max(...dates.map(date => date.getTime())));
+    
+    // Update the staff's lastEntryTime with the most recent date
+    await StaffModel.findByIdAndUpdate(staffId, {
+        lastEntryTime: dateToUTCDate(mostRecentDate)
+    });
+
     return true;
 }
 
