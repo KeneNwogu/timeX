@@ -18,7 +18,16 @@ export const createEmployer = async (req: Request, res: Response) => {
         { firstName, lastName, companyName, email, phone },
         bcrypt.hashSync(password, 10)
     );
-    return res.json({ employer }).end();
+
+    return res
+        .json({
+            firstName,
+            lastName,
+            companyName,
+            email,
+            phone,
+        })
+        .end();
 };
 
 export const employerLogin = async (req: Request, res: Response) => {
